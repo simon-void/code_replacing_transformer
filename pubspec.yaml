@@ -1,0 +1,11 @@
+name: code_replacing_transformer
+version: 0.0.1
+description: a minimal dart web-page with a transformer that modifies the code of the project (replaces a NO with YES)
+#author: <your name> <email@example.com>
+#homepage: https://www.example.com
+environment:
+  sdk: '>=1.14.0 <2.0.0'
+dependencies:
+  barback: any
+transformers:
+- code_replacing_transformer
