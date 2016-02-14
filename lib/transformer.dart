@@ -25,8 +25,12 @@ class ReplacePackageTransformer extends AggregateTransformer {
       Asset mainAsset = await _getFileAsset(transform, "main.dart");
       Asset updatedMainAsset =
           await _replaceDefaultImport(mainAsset, transform.package, "default.dart", newLibFileName);
+
+      //first remove the old version before adding one with the same id (seems to be neccessary)
+      transform.consumePrimary(mainAsset.id);
       transform.addOutput(updatedMainAsset);
 
+      //check if the replacement was successfull
       await _printAsset("mainAsset", mainAsset);
       await _printAsset("updatedMainAsset", updatedMainAsset);
 
