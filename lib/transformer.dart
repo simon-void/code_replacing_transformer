@@ -12,37 +12,26 @@ class ReplacePackageTransformer extends AggregateTransformer {
   String classifyPrimary(AssetId id) => id.toString().endsWith(".dart") ? "dart-files" : null;
 
   @override
-  apply(AggregateTransform transform) {
+  Future apply(AggregateTransform transform) {
     //capture the whole execution to allow better stacktraces if an error occurs
-    Chain.capture(() async {
-      print("create the new file replacement.dart in lib with the same interface as default.dart");
+    return Chain.capture(() async {
+      //print("create the new file replacement.dart in lib with the same interface as default.dart");
       final newLibFileName = "replacement.dart";
       final newLibAsset = _createReplacementAsset(newLibFileName, transform.package);
       transform.addOutput(newLibAsset);
 
-      print("replace main.dart import of default.dart with replacement.dart");
-
+      //print("replace main.dart import of default.dart with replacement.dart");
       Asset mainAsset = await _getFileAsset(transform, "main.dart");
       Asset updatedMainAsset =
           await _replaceDefaultImport(mainAsset, transform.package, "default.dart", newLibFileName);
-
-      //first remove the old version before adding one with the same id (seems to be neccessary)
-      transform.consumePrimary(mainAsset.id);
       transform.addOutput(updatedMainAsset);
-
-      //check if the replacement was successfull
-      await _printAsset("mainAsset", mainAsset);
-      await _printAsset("updatedMainAsset", updatedMainAsset);
-
-      var updatedMainAssetRetrieved = await transform.getInput(updatedMainAsset.id);
-      await _printAsset("updatedMainAssetRetrieved", updatedMainAssetRetrieved);
       print("------------------------------ transformer is done");
     });
   }
 
   Asset _createReplacementAsset(String newLibFileName, String transformPackage) {
     //the only difference to default.dart is that getMsg() returns 'replacement' instead of 'default'
-    final replacementCode = """library stringsource;
+    final replacementCode = """library codereplacingtransformer.stringsource;
 
         String getMsg() => "replacement";
         """;

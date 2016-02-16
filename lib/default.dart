@@ -1,3 +1,3 @@
-library stringsource;
+library codereplacingtransformer.stringsource;
 
 String getMsg() => "default";
